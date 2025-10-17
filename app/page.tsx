@@ -7,6 +7,7 @@ import { EntryList } from "@/components/entry-list"
 import { CalendarView } from "@/components/calendar-view"
 import { EditEntryDialog } from "@/components/edit-entry-dialog"
 import { FilterPanel } from "@/components/filter-panel"
+import { PINLockScreen } from "@/components/pin-lock-screen"
 import {
   getEntries,
   saveEntry,
@@ -16,6 +17,9 @@ import {
   type JournalEntry,
   type Mood,
 } from "@/lib/journal-store"
+import { applyTheme, getThemeSettings } from "@/lib/theme-store"
+import { isOnline, addToOfflineQueue } from "@/lib/offline-store"
+import { isPINEnabled, verifyPIN } from "@/lib/pin-store"
 import { useToast } from "@/hooks/use-toast"
 import { Toaster } from "@/components/ui/toaster"
 
@@ -28,14 +32,36 @@ export default function JournalPage() {
   const [filterMood, setFilterMood] = useState<Mood | "all">("all")
   const [filterRating, setFilterRating] = useState<number | "all">("all")
   const [filterTag, setFilterTag] = useState<string>("all")
+  const [isUnlocked, setIsUnlocked] = useState(!isPINEnabled())
   const { toast } = useToast()
 
   useEffect(() => {
     setEntries(getEntries())
+    applyTheme(getThemeSettings())
   }, [])
 
+  const handleUnlock = (pin: string) => {
+    if (verifyPIN(pin)) {
+      setIsUnlocked(true)
+    } else {
+      toast({
+        title: "Incorrect PIN",
+        description: "Please try again.",
+        variant: "destructive",
+      })
+    }
+  }
+
   const handleSaveEntry = (entry: Omit<JournalEntry, "id">) => {
-    saveEntry(entry)
+    if (!isOnline()) {
+      addToOfflineQueue(entry)
+      toast({
+        title: "Saved offline",
+        description: "Your entry will sync when you're back online.",
+      })
+    } else {
+      saveEntry(entry)
+    }
     setEntries(getEntries())
     toast({
       title: "Entry saved",
@@ -54,7 +80,7 @@ export default function JournalPage() {
       setEntries(getEntries())
       toast({
         title: "Entry deleted",
-        description: "Your journal entry has been deleted.",
+        description: "Your journal entry has been deleted. You can restore it from backups.",
       })
     }
   }
@@ -77,6 +103,18 @@ export default function JournalPage() {
     setView("entries")
     const dateStr = date.toLocaleDateString()
     setSearchQuery(dateStr)
+  }
+
+  const handleRestore = () => {
+    setEntries(getEntries())
+  }
+
+  if (!isUnlocked) {
+    return (
+      <div className="min-h-screen bg-background">
+        <PINLockScreen mode="verify" onUnlock={handleUnlock} />
+      </div>
+    )
   }
 
   const displayedEntries = (() => {

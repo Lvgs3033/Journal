@@ -3,6 +3,7 @@
 import { BookOpen, Calendar, Search, Star } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
+import { SettingsDialog } from "@/components/settings-dialog"
 
 interface JournalHeaderProps {
   view: "write" | "entries" | "calendar" | "favorites"
@@ -25,6 +26,7 @@ export function JournalHeader({ view, onViewChange, searchQuery, onSearchChange 
               <p className="text-sm text-muted-foreground">Your personal reflection space</p>
             </div>
           </div>
+          <SettingsDialog />
         </div>
 
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">

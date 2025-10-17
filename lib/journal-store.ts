@@ -1,5 +1,7 @@
 "use client"
 
+import { addToDeletedEntries } from "@/lib/backup-store"
+
 export type Mood = "amazing" | "good" | "okay" | "bad" | "terrible"
 
 export interface JournalEntry {
@@ -49,6 +51,10 @@ export function updateEntry(id: string, updates: Partial<JournalEntry>): void {
 
 export function deleteEntry(id: string): void {
   const entries = getEntries()
+  const entry = entries.find((e) => e.id === id)
+  if (entry) {
+    addToDeletedEntries(entry)
+  }
   const filtered = entries.filter((e) => e.id !== id)
   localStorage.setItem(STORAGE_KEY, JSON.stringify(filtered))
 }

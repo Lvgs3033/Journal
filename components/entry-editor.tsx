@@ -103,8 +103,8 @@ export function EntryEditor({ onSave }: EntryEditorProps) {
   })
 
   return (
-    <div className="mx-auto max-w-4xl px-4 py-8">
-      <Card className="border-border shadow-sm">
+    <div className="mx-auto max-w-4xl px-4 py-8 animate-fade-in">
+      <Card className="border-border shadow-sm hover-lift">
         <CardHeader>
           <CardTitle className="text-xl font-medium text-foreground">{today}</CardTitle>
         </CardHeader>
@@ -118,7 +118,7 @@ export function EntryEditor({ onSave }: EntryEditorProps) {
               placeholder="Give your entry a title..."
               value={title}
               onChange={(e) => setTitle(e.target.value)}
-              className="text-lg"
+              className="text-lg transition-smooth focus:ring-2 focus:ring-primary"
             />
           </div>
 
@@ -131,7 +131,7 @@ export function EntryEditor({ onSave }: EntryEditorProps) {
               placeholder="What's on your mind today?"
               value={content}
               onChange={(e) => setContent(e.target.value)}
-              className="min-h-[300px] resize-none text-base leading-relaxed"
+              className="min-h-[300px] resize-none text-base leading-relaxed transition-smooth focus:ring-2 focus:ring-primary"
             />
           </div>
 
@@ -146,11 +146,11 @@ export function EntryEditor({ onSave }: EntryEditorProps) {
                   key={star}
                   type="button"
                   onClick={() => setRating(star)}
-                  className="transition-transform hover:scale-110"
+                  className="transition-smooth hover:scale-110 active:scale-95"
                 >
                   <Star
-                    className={`h-6 w-6 ${
-                      rating && star <= rating ? "fill-primary text-primary" : "text-muted-foreground"
+                    className={`h-6 w-6 transition-smooth ${
+                      rating && star <= rating ? "fill-primary text-primary animate-glow" : "text-muted-foreground"
                     }`}
                   />
                 </button>
@@ -171,9 +171,9 @@ export function EntryEditor({ onSave }: EntryEditorProps) {
                   variant={mood === m.value ? "default" : "outline"}
                   size="sm"
                   onClick={() => setMood(m.value)}
-                  className="gap-2"
+                  className="gap-2 transition-smooth hover-scale"
                 >
-                  <span className="text-lg">{m.emoji}</span>
+                  <span className="text-lg animate-bounce-soft">{m.emoji}</span>
                   {m.label}
                 </Button>
               ))}
@@ -193,23 +193,28 @@ export function EntryEditor({ onSave }: EntryEditorProps) {
               onChange={handleImageUpload}
               className="hidden"
             />
-            <Button type="button" variant="outline" onClick={() => fileInputRef.current?.click()} className="w-full">
+            <Button
+              type="button"
+              variant="outline"
+              onClick={() => fileInputRef.current?.click()}
+              className="w-full transition-smooth hover-scale"
+            >
               <ImageIcon className="h-4 w-4 mr-2" />
               Add Images
             </Button>
             {images.length > 0 && (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 mt-2">
                 {images.map((img, idx) => (
-                  <div key={idx} className="relative group">
+                  <div key={idx} className="relative group animate-fade-in">
                     <img
                       src={img || "/placeholder.svg"}
                       alt={`Upload ${idx + 1}`}
-                      className="w-full h-32 object-cover rounded-lg"
+                      className="w-full h-32 object-cover rounded-lg transition-smooth hover-scale"
                     />
                     <button
                       type="button"
                       onClick={() => handleRemoveImage(idx)}
-                      className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity"
+                      className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity hover-scale"
                     >
                       <X className="h-4 w-4" />
                     </button>
@@ -235,15 +240,26 @@ export function EntryEditor({ onSave }: EntryEditorProps) {
                     handleAddTag()
                   }
                 }}
+                className="transition-smooth focus:ring-2 focus:ring-primary"
               />
-              <Button type="button" onClick={handleAddTag} variant="outline">
+              <Button
+                type="button"
+                onClick={handleAddTag}
+                variant="outline"
+                className="transition-smooth hover-scale bg-transparent"
+              >
                 Add
               </Button>
             </div>
             {tags.length > 0 && (
               <div className="flex gap-2 flex-wrap mt-2">
                 {tags.map((tag) => (
-                  <Badge key={tag} variant="secondary" className="cursor-pointer" onClick={() => handleRemoveTag(tag)}>
+                  <Badge
+                    key={tag}
+                    variant="secondary"
+                    className="cursor-pointer transition-smooth hover-scale"
+                    onClick={() => handleRemoveTag(tag)}
+                  >
                     {tag} ×
                   </Badge>
                 ))}
@@ -251,7 +267,12 @@ export function EntryEditor({ onSave }: EntryEditorProps) {
             )}
           </div>
 
-          <Button onClick={handleSave} disabled={!title.trim() || !content.trim()} className="w-full gap-2" size="lg">
+          <Button
+            onClick={handleSave}
+            disabled={!title.trim() || !content.trim()}
+            className="w-full gap-2 transition-smooth hover-scale"
+            size="lg"
+          >
             <Save className="h-4 w-4" />
             Save Entry
           </Button>

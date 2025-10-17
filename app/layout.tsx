@@ -5,6 +5,7 @@ import { GeistMono } from "geist/font/mono"
 import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 import { Suspense } from "react"
+import { OfflineIndicator } from "@/components/offline-indicator"
 
 export const metadata: Metadata = {
   title: "Daily Journal - Your Personal Reflection Space",
@@ -21,6 +22,7 @@ export default function RootLayout({
     <html lang="en">
       <body className={`font-sans ${GeistSans.variable} ${GeistMono.variable}`}>
         <Suspense fallback={null}>{children}</Suspense>
+        <OfflineIndicator />
         <Analytics />
       </body>
     </html>
